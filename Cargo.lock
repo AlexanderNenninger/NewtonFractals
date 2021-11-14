@@ -235,6 +235,7 @@ dependencies = [
  "image",
  "ndarray",
  "num",
+ "num-traits",
 ]
 
 [[package]]
