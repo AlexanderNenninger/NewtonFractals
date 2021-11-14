@@ -45,7 +45,7 @@ impl AsIndex for Complex64 {
         [(o.re / r.re * w) as usize, (o.im / r.im * h) as usize]
     }
 
-    // Given an array index, return the corresponding Complex64
+    // given an array index, return the corresponding Complex64
     fn from_index(idx: [usize; 2], min: Self, max: Self, width: usize, height: usize) -> Self {
         let i = (idx[0] as f64) / (width as f64);
         let j = (idx[1] as f64) / (height as f64);
