@@ -52,12 +52,12 @@ impl Cluster {
 }
 
 fn main() {
-    let s = (10, 10);
+    let s = (9, 9, 3);
     let min_z = Complex64::new(-1., -1.);
     let max_z = Complex64::new(1., 1.);
 
     let mut roots = Cluster::new();
-    let mut root_img = Array2::<isize>::zeros(s);
+    let mut img_arr = Array3::<u8>::zeros(s);
 
     let f = |x: Complex64| -> Complex64 { x.powu(3) + 1. };
     let df = |x: Complex64| -> Complex64 { 3. * x.powu(2) };
@@ -66,10 +66,17 @@ fn main() {
         for j in 0..s.1 {
             let z0 = Complex64::from_index([i, j], min_z, max_z, s.0, s.1);
             let res = newton(f, df, z0);
-            root_img[[i, j]] = roots.push_maybe(res);
+            let root = roots.push_maybe(res);
+            let col = viz::Colors::from_int(root);          
+
+            img_arr[[i, j, 0]] = col.r;
+            img_arr[[i, j, 1]] = col.g;
+            img_arr[[i, j, 2]] = col.b;
         }
     }
-    println!("{:?}", root_img);
+
+    let img = viz::array_to_image(img_arr);
+    img.save("plots/out.png").unwrap();
     println!("done")
 }
 

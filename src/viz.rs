@@ -48,10 +48,10 @@ impl Colors {
 
     pub fn from_int(i: isize) -> Color {
         match i % 4 {
-            0 => Colors::NavyBlue.value(),
+            0 => Colors::DarkRed.value(),
             1 => Colors::NavyBlue.value(),
-            2 => Colors::NavyBlue.value(),
-            3 => Colors::NavyBlue.value(),
+            2 => Colors::DarkBlue.value(),
+            3 => Colors::SunYellow.value(),
             _ => Colors::Black.value(),
         }
     }
