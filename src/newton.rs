@@ -25,6 +25,34 @@ pub fn newton(f: Complex64Fun, df: Complex64Fun, z0: Complex64) -> Option<Comple
     None
 }
 
+pub trait AsIndex {
+    // Convert any 2-dimensional object to an image index
+    fn as_index(&self, min: Self, max: Self, width: usize, height: usize) -> [usize; 2];
+
+    // Make any 2-dimensional object from an image index
+    fn from_index(idx: [usize; 2], min: Self, max: Self, width: usize, height: usize) -> Self;
+}
+
+impl AsIndex for Complex64 {
+    fn as_index(&self, min: Self, max: Self, width: usize, height: usize) -> [usize; 2] {
+        let o = self - min;
+        let r = max - min;
+
+        let w = width as f64;
+        let h = height as f64;
+        [(o.re / r.re * w) as usize, (o.im / r.im * h) as usize]
+    }
+
+    fn from_index(idx: [usize; 2], min: Self, max: Self, width: usize, height: usize) -> Self {
+        let i = (idx[0] as f64) / (width as f64);
+        let j = (idx[1] as f64) / (height as f64);
+
+        let re: f64 = i as f64 * max.re + (1. - i) as f64 * min.re;
+        let im: f64 = j as f64 * max.im + (1. - j) as f64 * min.im;
+        return Complex64::new(re, im);
+    }
+}
+
 #[cfg(test)]
 mod tests {
     const TEST_TOL: f64 = 0.0001;
@@ -96,5 +124,29 @@ mod tests {
             "Solution to x³ + 1=0 not found. Err = {}",
             (res - solutions.2).norm()
         );
+    }
+
+    #[test]
+    fn test_as_index() {
+        let s = (1000, 1000);
+        let min_z = Complex64::new(-2., -2.);
+        let max_z = Complex64::new(2., 2.);
+
+        let z = Complex64::from(0.);
+        let idx = z.as_index(min_z, max_z, s.0, s.1);
+        assert_eq!(idx, [500, 500], "Index: {:?}", idx)
+    }
+
+    #[test]
+    fn test_from_index() {
+        let s = (1000, 1000);
+        let min_z = Complex64::new(-2., -2.);
+        let max_z = Complex64::new(2., 2.);
+        let idx = [500, 500];
+
+        let z = Complex64::from_index(idx, min_z, max_z, s.0, s.1);
+        let e = (z - Complex64::from(0.)).norm();
+
+        assert!(e < TEST_TOL, "z= {}", z)
     }
 }
