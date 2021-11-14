@@ -1,9 +1,5 @@
-#![allow(dead_code)]
-
 use image::RgbImage;
 use ndarray::Array3;
-use num::Complex;
-use num_traits::identities::Zero;
 
 pub struct Color {
     pub r: u8,
@@ -18,6 +14,7 @@ impl Color {
 }
 
 // Names for real colors
+#[allow(unused)]
 pub enum Colors {
     Black,
     White,
@@ -31,7 +28,7 @@ pub enum Colors {
 }
 
 impl Colors {
-    // Emulate a Color cycler
+    // emulate a color cycler
     pub fn value(&self) -> Color {
         match *self {
             Colors::Black => Color::new(0, 0, 0),
@@ -39,7 +36,7 @@ impl Colors {
             Colors::Red => Color::new(1, 0, 0),
             Colors::Green => Color::new(0, 1, 0),
             Colors::Blue => Color::new(0, 0, 1),
-            // Beautyful Colors
+            // beautiful colors
             Colors::DarkRed => Color::new(175, 0, 0),
             Colors::NavyBlue => Color::new(0, 159, 255),
             Colors::DarkBlue => Color::new(51, 122, 183),
@@ -66,19 +63,4 @@ pub fn array_to_image(arr: Array3<u8>) -> RgbImage {
 
     RgbImage::from_raw(width as u32, height as u32, raw)
         .expect("container should have the right size for the image dimensions")
-}
-
-pub fn quadrant<T: Zero + PartialOrd>(z: Option<Complex<T>>) -> Color {
-    // Get Quadrant of any complex number
-    if z.is_some() {
-        let z = z.unwrap();
-        match (z.re >= T::zero(), z.im >= T::zero()) {
-            (true, true) => Colors::NavyBlue.value(),
-            (false, true) => Colors::SunYellow.value(),
-            (true, false) => Colors::DarkRed.value(),
-            (false, false) => Colors::DarkBlue.value(),
-        }
-    } else {
-        Colors::Black.value()
-    }
 }

@@ -7,8 +7,9 @@ pub type Complex64 = Complex<f64>;
 
 pub type Complex64Fun = fn(Complex64) -> Complex64;
 
+// Newton's method in the complex plane
+// https://fse.studenttheses.ub.rug.nl/14180/1/Alida_Wiersma_2016_WB.pdf
 pub fn newton(f: Complex64Fun, df: Complex64Fun, z0: Complex64) -> Option<Complex64> {
-    // https://fse.studenttheses.ub.rug.nl/14180/1/Alida_Wiersma_2016_WB.pdf
     let mut z = z0;
     let mut z_new: Complex64;
     let mut update: Complex64;
@@ -34,6 +35,7 @@ pub trait AsIndex {
 }
 
 impl AsIndex for Complex64 {
+    // given a complex number z, find the array index closest to where z would be in the complex plane
     fn as_index(&self, min: Self, max: Self, width: usize, height: usize) -> [usize; 2] {
         let o = self - min;
         let r = max - min;
@@ -43,6 +45,7 @@ impl AsIndex for Complex64 {
         [(o.re / r.re * w) as usize, (o.im / r.im * h) as usize]
     }
 
+    // Given an array index, return the corresponding Complex64
     fn from_index(idx: [usize; 2], min: Self, max: Self, width: usize, height: usize) -> Self {
         let i = (idx[0] as f64) / (width as f64);
         let j = (idx[1] as f64) / (height as f64);

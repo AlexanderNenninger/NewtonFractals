@@ -1,14 +1,10 @@
-#![allow(dead_code)]
-
 extern crate image;
 extern crate ndarray;
 
 use ndarray::prelude::*;
 
-mod viz;
-#[allow(unused)]
-use viz::array_to_image;
 mod newton;
+mod viz;
 use newton::*;
 
 #[derive(Debug, Clone, PartialEq)]
@@ -27,7 +23,7 @@ impl Cluster {
         }
     }
 
-    // Update count and mean for z is close to a previous cluster or make a new cluster.
+    // Update count and mean if z is close to a previous cluster. Else make a new cluster and add z.
     fn push(&mut self, z: Complex64) -> usize {
         let mut i = 0;
         for (cls, count) in self.cluster.iter_mut().zip(self.count.iter_mut()) {
@@ -43,6 +39,7 @@ impl Cluster {
         return i;
     }
 
+    // Utility Function to encode possible None values
     fn push_maybe(&mut self, z: Option<Complex64>) -> isize {
         match z {
             Some(z) => self.push(z) as isize,
@@ -52,23 +49,37 @@ impl Cluster {
 }
 
 fn main() {
+    // Output size
     let s = (10000, 10000, 3);
+
+    // Plot Limits
     let min_z = Complex64::new(-1., -1.);
     let max_z = Complex64::new(1., 1.);
 
+    // loop setup
+    // Stash of roots
     let mut roots = Cluster::new();
+    // output array
     let mut img_arr = Array3::<u8>::zeros(s);
 
+    // We search for roots of this function
     let f = |x: Complex64| -> Complex64 { x.powu(3) + 1. };
     let df = |x: Complex64| -> Complex64 { 3. * x.powu(2) };
 
+    // Assign a color to each pixel in img_arr
     for i in 0..s.0 {
         for j in 0..s.1 {
+            // starting pos
             let z0 = Complex64::from_index([i, j], min_z, max_z, s.0, s.1);
-            let res = newton(f, df, z0);
-            let root = roots.push_maybe(res);
-            let col = viz::Colors::from_int(root);          
 
+            //root
+            let res = newton(f, df, z0);
+
+            // Wihch root did we converge to?
+            let root = roots.push_maybe(res);
+            let col = viz::Colors::from_int(root);
+
+            // write color
             img_arr[[i, j, 0]] = col.r;
             img_arr[[i, j, 1]] = col.g;
             img_arr[[i, j, 2]] = col.b;
@@ -104,10 +115,12 @@ mod tests {
 
         assert_eq!(cls, vec![0, 0, 0, 1, 1]);
         println!("{:?}", cls);
+        println!("{:?}", cluster);
     }
 
     #[test]
     fn test_rem() {
+        // I didn't know precisely how % works in rust
         println!("{}", -5 % 3);
         println!("{}", -2 % 3);
         println!("{}", -5 % 5);
