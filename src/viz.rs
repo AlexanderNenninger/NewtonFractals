@@ -31,6 +31,7 @@ pub enum Colors {
 }
 
 impl Colors {
+    // Emulate a Color cycler
     pub fn value(&self) -> Color {
         match *self {
             Colors::Black => Color::new(0, 0, 0),
@@ -48,10 +49,10 @@ impl Colors {
 
     pub fn from_int(i: isize) -> Color {
         match i % 4 {
-            0 => Colors::DarkRed.value(),
-            1 => Colors::NavyBlue.value(),
-            2 => Colors::DarkBlue.value(),
-            3 => Colors::SunYellow.value(),
+            0 => Colors::SunYellow.value(),
+            1 => Colors::DarkRed.value(),
+            2 => Colors::NavyBlue.value(),
+            3 => Colors::DarkBlue.value(),
             _ => Colors::Black.value(),
         }
     }
@@ -69,7 +70,6 @@ pub fn array_to_image(arr: Array3<u8>) -> RgbImage {
 
 pub fn quadrant<T: Zero + PartialOrd>(z: Option<Complex<T>>) -> Color {
     // Get Quadrant of any complex number
-
     if z.is_some() {
         let z = z.unwrap();
         match (z.re >= T::zero(), z.im >= T::zero()) {

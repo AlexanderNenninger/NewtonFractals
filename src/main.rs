@@ -52,7 +52,7 @@ impl Cluster {
 }
 
 fn main() {
-    let s = (9, 9, 3);
+    let s = (10000, 10000, 3);
     let min_z = Complex64::new(-1., -1.);
     let max_z = Complex64::new(1., 1.);
 
