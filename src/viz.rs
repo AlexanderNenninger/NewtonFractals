@@ -40,7 +40,7 @@ impl Colors {
             Colors::DarkRed => Color::new(175, 0, 0),
             Colors::NavyBlue => Color::new(0, 159, 255),
             Colors::DarkBlue => Color::new(51, 122, 183),
-            Colors::SunYellow => Color::new(0, 80, 255),
+            Colors::SunYellow => Color::new(255, 175, 0),
         }
     }
 
