@@ -8,9 +8,8 @@ use num::complex::Complex;
 
 mod viz;
 use viz::{array_to_image, quadrant};
-
-const MAX_IT: usize = 1000;
-const TOL: f64 = 0.0000001;
+mod newton;
+use newton::newton;
 
 trait AsIndex {
     // Convert any 2-dimensional object to an image index
@@ -40,24 +39,6 @@ impl AsIndex for C {
         let im: f64 = j as f64 * max.im + (1. - j) as f64 * min.im;
         return C::new(re, im);
     }
-}
-
-fn newton(f: fn(C) -> C, df: fn(C) -> C, z0: C) -> Option<C> {
-    // https://fse.studenttheses.ub.rug.nl/14180/1/Alida_Wiersma_2016_WB.pdf
-    let mut z = z0;
-    let mut z_new: C;
-    let mut update: C;
-
-    for _i in 0..MAX_IT {
-        z_new = z - f(z) / df(z);
-        update = z_new - z;
-        z = z_new;
-
-        if update.norm() < TOL {
-            return Some(z);
-        }
-    }
-    None
 }
 
 fn f(z: C) -> C {
@@ -96,77 +77,8 @@ fn main() {
 mod tests {
     use super::*;
 
-    // Tolerance for Newton
+    // Tolerance
     const TEST_TOL: f64 = 0.0001;
-
-    #[test]
-    fn test_newton() {
-        // f(x) = x²
-        let f = |x: C| -> C { x * x };
-        let df = |x: C| -> C { 2. * x };
-        let z0 = C::new(0.2, 0.2);
-
-        let res = newton(f, df, z0).expect("Newton for z² = 0 failed");
-        assert!(res.norm() < TEST_TOL, "x²=0 failed");
-
-        // f(x) = x³ + 1
-        let f = |x: C| -> C { x.powu(3) + C::from(1.) };
-        let df = |x: C| -> C { 3. * x.powu(2) };
-
-        let solutions: (C, C, C) = (
-            C::new(-1., 0.),
-            C::new(0.5, 0.866025403784439),
-            C::new(0.5, -0.866025403784439),
-        );
-
-        // Real line
-        let z0 = C::new(-0.2, 0.);
-
-        let res = newton(f, df, z0).expect("Newton for z³ + 1 = 0 failed");
-        assert!(
-            res.norm() - 1. < TEST_TOL,
-            "Solution to x³+1=0 not on the unit circle. {1:.4} -> {0:.4}",
-            res,
-            z0
-        );
-        assert!(
-            (res - solutions.0).norm() < TEST_TOL,
-            "Solution to x³ + 1 = 0 not found. Err = {}",
-            (res - solutions.0).norm()
-        );
-
-        // 1st imaginary solution
-        let z0 = C::new(0.5, 0.8);
-
-        let res = newton(f, df, z0).expect("Newton for z³ + 1 = 0 failed");
-        assert!(
-            res.norm() - 1. < TEST_TOL,
-            "Solution to x³+1=0 not on the unit circle. {1:.4} -> {0:.4}",
-            res,
-            z0
-        );
-        assert!(
-            (res - solutions.1).norm() < TEST_TOL,
-            "Solution to x³ + 1=0 not found. Err = {}",
-            (res - solutions.1).norm()
-        );
-
-        // 2nd imaginary solution
-        let z0 = C::new(0.5, -0.8);
-
-        let res = newton(f, df, z0).expect("Newton for z³ + 1 = 0 failed");
-        assert!(
-            res.norm() - 1. < TEST_TOL,
-            "Solution to x³+1=0 not on the unit circle. {1:.4} -> {0:.4}",
-            res,
-            z0
-        );
-        assert!(
-            (res - solutions.2).norm() < TEST_TOL,
-            "Solution to x³ + 1=0 not found. Err = {}",
-            (res - solutions.2).norm()
-        );
-    }
 
     #[test]
     fn test_as_index() {
