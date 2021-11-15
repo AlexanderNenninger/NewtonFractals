@@ -1,25 +1,28 @@
 use num::Complex;
+use num::Float;
 
 const MAX_IT: usize = 1000;
-const TOL: f64 = 0.0000001;
 
-pub type Complex64 = Complex<f64>;
-
-pub type Complex64Fun = fn(Complex64) -> Complex64;
-
-// Newton's method in the complex plane
-// https://fse.studenttheses.ub.rug.nl/14180/1/Alida_Wiersma_2016_WB.pdf
-pub fn newton(f: Complex64Fun, df: Complex64Fun, z0: Complex64) -> Option<Complex64> {
+/// Newton's method in the complex plane
+/// https://fse.studenttheses.ub.rug.nl/14180/1/Alida_Wiersma_2016_WB.pdf
+pub fn newton<T>(
+    f: fn(Complex<T>) -> Complex<T>,
+    df: fn(Complex<T>) -> Complex<T>,
+    z0: Complex<T>,
+) -> Option<Complex<T>>
+where
+    T: Float,
+{
     let mut z = z0;
-    let mut z_new: Complex64;
-    let mut update: Complex64;
+    let mut z_new: Complex<T>;
+    let mut update: Complex<T>;
 
     for _i in 0..MAX_IT {
         z_new = z - f(z) / df(z);
         update = z_new - z;
         z = z_new;
 
-        if update.norm() < TOL {
+        if update.norm() < Float::epsilon() {
             return Some(z);
         }
     }
@@ -27,15 +30,16 @@ pub fn newton(f: Complex64Fun, df: Complex64Fun, z0: Complex64) -> Option<Comple
 }
 
 pub trait AsIndex {
-    // Convert any 2-dimensional object to an image index
+    /// Convert any 2-dimensional object to an image index
     fn as_index(&self, min: Self, max: Self, width: usize, height: usize) -> [usize; 2];
 
     // Make any 2-dimensional object from an image index
     fn from_index(idx: [usize; 2], min: Self, max: Self, width: usize, height: usize) -> Self;
 }
 
+pub type Complex64 = Complex<f64>;
 impl AsIndex for Complex64 {
-    // given a complex number z, find the array index closest to where z would be in the complex plane
+    /// given a complex number z, find the array index closest to where z would be in the complex plane
     fn as_index(&self, min: Self, max: Self, width: usize, height: usize) -> [usize; 2] {
         let o = self - min;
         let r = max - min;
@@ -45,7 +49,7 @@ impl AsIndex for Complex64 {
         [(o.re / r.re * w) as usize, (o.im / r.im * h) as usize]
     }
 
-    // given an array index, return the corresponding Complex64
+    /// given an array index, return the corresponding Complex64
     fn from_index(idx: [usize; 2], min: Self, max: Self, width: usize, height: usize) -> Self {
         let i = (idx[0] as f64) / (width as f64);
         let j = (idx[1] as f64) / (height as f64);
