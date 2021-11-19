@@ -80,14 +80,14 @@ fn main() {
 
     // Thread pool to find our roots
     let pool = rayon::ThreadPoolBuilder::new()
-        .num_threads(6)
+        .num_threads(8)
         .build()
         .unwrap();
     
     let (tx, rx) = std::sync::mpsc::channel();
     for (i, j) in (0..s.0).cartesian_product(0..s.1) {
         let tx = tx.clone();
-        pool.spawn_fifo(move || {
+        pool.spawn(move || {
             tx.send(
                 newton_from_index(i, j)
             ).unwrap()
@@ -98,8 +98,7 @@ fn main() {
     // Collect results from threads
     let results: Vec<Pixel> = rx.into_iter().collect();
 
-    for 
-    (i, j, res) in results.into_iter() {
+    for (i, j, res) in results.into_iter() {
         // Wich root did we converge to?
         let root = roots.push_maybe(res);
         let col = viz::Colors::from_int(root);
