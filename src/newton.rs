@@ -22,7 +22,7 @@ where
         update = z_new - z;
         z = z_new;
 
-        if update.norm() < Float::epsilon() {
+        if update.norm_sqr() < T::epsilon() {
             return Some(z);
         }
     }

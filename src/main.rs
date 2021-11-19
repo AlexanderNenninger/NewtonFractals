@@ -27,7 +27,7 @@ impl Cluster {
     fn push(&mut self, z: Complex64) -> usize {
         let mut i = 0;
         for (cls, count) in self.cluster.iter_mut().zip(self.count.iter_mut()) {
-            if (z - *cls).norm() < self.tol {
+            if (z - *cls).norm_sqr() < self.tol {
                 *cls = (*cls * (*count as f64) + z) / (*count + 1) as f64;
                 *count += 1;
                 return i;
