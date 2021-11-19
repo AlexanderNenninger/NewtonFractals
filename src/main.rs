@@ -1,6 +1,10 @@
+use std::option::Option;
+
+use rayon;
+use itertools::Itertools;
+
 extern crate image;
 extern crate ndarray;
-
 use ndarray::prelude::*;
 
 mod newton;
@@ -50,7 +54,7 @@ impl Cluster {
 
 fn main() {
     // Output size
-    let s = (1000, 1000, 3);
+    let s = (10000, 10000, 3);
 
     // Plot Limits
     let min_z = Complex64::new(-1., -1.);
@@ -66,24 +70,44 @@ fn main() {
     let f = |x: Complex64| -> Complex64 { x.powu(3) + 1. };
     let df = |x: Complex64| -> Complex64 { 3. * x.powu(2) };
 
-    // Assign a color to each pixel in img_arr
-    for i in 0..s.0 {
-        for j in 0..s.1 {
-            // starting pos
-            let z0 = Complex64::from_index([i, j], min_z, max_z, s.0, s.1);
+    // Type shorthand for remembering index and pixel color
+    type Pixel = (usize, usize, Option<Complex64>);
+    
+    // Wrap newton in a closure
+    let newton_from_index = move |i: usize, j: usize| -> Pixel {
+        (i, j, newton(f, df, Complex64::from_index([i, j], min_z, max_z, s.0, s.1)))
+    };
 
-            //root
-            let res = newton(f, df, z0);
+    // Thread pool to find our roots
+    let pool = rayon::ThreadPoolBuilder::new()
+        .num_threads(6)
+        .build()
+        .unwrap();
+    
+    let (tx, rx) = std::sync::mpsc::channel();
+    for (i, j) in (0..s.0).cartesian_product(0..s.1) {
+        let tx = tx.clone();
+        pool.spawn_fifo(move || {
+            tx.send(
+                newton_from_index(i, j)
+            ).unwrap()
+        })    
+    }
+    drop(tx);
 
-            // Wihch root did we converge to?
-            let root = roots.push_maybe(res);
-            let col = viz::Colors::from_int(root);
+    // Collect results from threads
+    let results: Vec<Pixel> = rx.into_iter().collect();
 
-            // write color
-            img_arr[[i, j, 0]] = col.r;
-            img_arr[[i, j, 1]] = col.g;
-            img_arr[[i, j, 2]] = col.b;
-        }
+    for 
+    (i, j, res) in results.into_iter() {
+        // Wich root did we converge to?
+        let root = roots.push_maybe(res);
+        let col = viz::Colors::from_int(root);
+
+        // write color
+        img_arr[[i, j, 0]] = col.r;
+        img_arr[[i, j, 1]] = col.g;
+        img_arr[[i, j, 2]] = col.b;
     }
 
     let img = viz::array_to_image(img_arr);
