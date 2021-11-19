@@ -50,7 +50,7 @@ impl Cluster {
 
 fn main() {
     // Output size
-    let s = (1000, 1000, 3);
+    let s = (10000, 10000, 3);
 
     // Plot Limits
     let min_z = Complex64::new(-1., -1.);
