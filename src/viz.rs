@@ -21,10 +21,18 @@ pub enum Colors {
     Red,
     Green,
     Blue,
+    // Nice Colors
     DarkRed,
     NavyBlue,
     DarkBlue,
     SunYellow,
+    // Grays
+    FaintGray,
+    LightGray,
+    MediumGray,
+    HeavyGray,
+    DarkGray
+
 }
 
 impl Colors {
@@ -41,15 +49,22 @@ impl Colors {
             Colors::NavyBlue => Color::new(0, 159, 255),
             Colors::DarkBlue => Color::new(51, 122, 183),
             Colors::SunYellow => Color::new(255, 175, 0),
+            // Grays
+            Colors::FaintGray => Color::new(238,238,238),
+            Colors::LightGray => Color::new(221,221,221),
+            Colors::MediumGray => Color::new(204,204,204),
+            Colors::HeavyGray => Color::new(187,187,187),
+            Colors::DarkGray => Color::new(154,154,154),
+            
         }
     }
 
     pub fn from_int(i: isize) -> Color {
         match i % 4 {
-            0 => Colors::SunYellow.value(),
-            1 => Colors::DarkRed.value(),
-            2 => Colors::NavyBlue.value(),
-            3 => Colors::DarkBlue.value(),
+            0 => Colors::FaintGray.value(),
+            1 => Colors::LightGray.value(),
+            2 => Colors::MediumGray.value(),
+            3 => Colors::DarkGray.value(),
             _ => Colors::Black.value(),
         }
     }
