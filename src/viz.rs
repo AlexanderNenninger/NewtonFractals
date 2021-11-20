@@ -31,7 +31,13 @@ pub enum Colors {
     LightGray,
     MediumGray,
     HeavyGray,
-    DarkGray
+    DarkGray,
+    // Space Grays
+    SpaceFaintGray,
+    SpaceLightGray,
+    SpaceMediumGray,
+    SpaceHeavyGray,
+    SpaceDarkGray
 
 }
 
@@ -55,16 +61,22 @@ impl Colors {
             Colors::MediumGray => Color::new(204,204,204),
             Colors::HeavyGray => Color::new(187,187,187),
             Colors::DarkGray => Color::new(154,154,154),
+            // Space
+            Colors::SpaceFaintGray => Color::new(192,197,206),
+            Colors::SpaceLightGray => Color::new(167,173,186),
+            Colors::SpaceMediumGray => Color::new(101,115,126),
+            Colors::SpaceHeavyGray => Color::new(79,91,102),
+            Colors::SpaceDarkGray => Color::new(52,61,70),
             
         }
     }
 
     pub fn from_int(i: isize) -> Color {
         match i % 4 {
-            0 => Colors::FaintGray.value(),
-            1 => Colors::LightGray.value(),
-            2 => Colors::MediumGray.value(),
-            3 => Colors::DarkGray.value(),
+            0 => Colors::SpaceFaintGray.value(),
+            1 => Colors::SpaceLightGray.value(),
+            2 => Colors::SpaceMediumGray.value(),
+            3 => Colors::SpaceDarkGray.value(),
             _ => Colors::Black.value(),
         }
     }
