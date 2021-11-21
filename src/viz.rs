@@ -37,8 +37,7 @@ pub enum Colors {
     SpaceLightGray,
     SpaceMediumGray,
     SpaceHeavyGray,
-    SpaceDarkGray
-
+    SpaceDarkGray,
 }
 
 impl Colors {
@@ -56,18 +55,17 @@ impl Colors {
             Colors::DarkBlue => Color::new(51, 122, 183),
             Colors::SunYellow => Color::new(255, 175, 0),
             // Grays
-            Colors::FaintGray => Color::new(238,238,238),
-            Colors::LightGray => Color::new(221,221,221),
-            Colors::MediumGray => Color::new(204,204,204),
-            Colors::HeavyGray => Color::new(187,187,187),
-            Colors::DarkGray => Color::new(154,154,154),
+            Colors::FaintGray => Color::new(238, 238, 238),
+            Colors::LightGray => Color::new(221, 221, 221),
+            Colors::MediumGray => Color::new(204, 204, 204),
+            Colors::HeavyGray => Color::new(187, 187, 187),
+            Colors::DarkGray => Color::new(154, 154, 154),
             // Space
-            Colors::SpaceFaintGray => Color::new(192,197,206),
-            Colors::SpaceLightGray => Color::new(167,173,186),
-            Colors::SpaceMediumGray => Color::new(101,115,126),
-            Colors::SpaceHeavyGray => Color::new(79,91,102),
-            Colors::SpaceDarkGray => Color::new(52,61,70),
-            
+            Colors::SpaceFaintGray => Color::new(192, 197, 206),
+            Colors::SpaceLightGray => Color::new(167, 173, 186),
+            Colors::SpaceMediumGray => Color::new(101, 115, 126),
+            Colors::SpaceHeavyGray => Color::new(79, 91, 102),
+            Colors::SpaceDarkGray => Color::new(52, 61, 70),
         }
     }
 

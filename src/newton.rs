@@ -1,8 +1,6 @@
 use num::Complex;
 use num::Float;
 
-const MAX_IT: usize = 1000;
-
 /// Newton's method in the complex plane
 /// https://fse.studenttheses.ub.rug.nl/14180/1/Alida_Wiersma_2016_WB.pdf
 pub fn newton<T>(
@@ -13,6 +11,7 @@ pub fn newton<T>(
 where
     T: Float,
 {
+    const MAX_IT: usize = 1000;
     let mut z = z0;
     let mut z_new: Complex<T>;
     let mut update: Complex<T>;
